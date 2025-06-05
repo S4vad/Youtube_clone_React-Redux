@@ -4,11 +4,11 @@ import { useDispatch } from "react-redux";
 import { toggleMenuBar } from "../store/navSlice";
 
 export const Header = () => {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   return (
     <div className="grid grid-flow-col p-2 mx-auto  items-center ">
       <div className="flex items-center gap-2 col-span-1 ml-2">
-        <button onClick={()=>dispatch(toggleMenuBar())}>
+        <button onClick={() => dispatch(toggleMenuBar())}>
           <Menu />
         </button>
         <div className="w-24 ">
@@ -27,7 +27,7 @@ export const Header = () => {
           placeholder="search"
         />
         <div className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500">
-          <Search  className="size-5 ml-2"/>
+          <Search className="size-5 ml-2" />
         </div>
       </div>
 

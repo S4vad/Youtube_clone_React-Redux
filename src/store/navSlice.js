@@ -6,9 +6,10 @@ const navSlice=createSlice({
     showMenuBar:true
   },
   reducers:{
-    toggleMenuBar:(state)=>{state.showMenuBar = !state.showMenuBar}
+    toggleMenuBar:(state)=>{state.showMenuBar = !state.showMenuBar},
+    closeMenu:(state)=>{state.showMenuBar=false}
   }
 })
 
 export default navSlice.reducer;
-export const {toggleMenuBar}=navSlice.actions
+export const {toggleMenuBar,closeMenu}=navSlice.actions
