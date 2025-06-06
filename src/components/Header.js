@@ -1,37 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Menu, Search } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleMenuBar } from "../store/navSlice";
 import { YOUTUBE_SEARCH_SUGGESTION_API } from "../utils/constants";
+import { cacheResults } from "../store/searchSlice";
 
 export const Header = () => {
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useState("");
+  const searchCache = useSelector((store) => store.search);
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [showSuggestion,setShowSuggestion]=useState(false)
+  const [showSuggestion, setShowSuggestion] = useState(false);
 
   useEffect(() => {
-    if (!searchParams) return;
+    if (!searchQuery) return;
 
     const fetchSuggestions = async () => {
       try {
-        const res = await fetch(YOUTUBE_SEARCH_SUGGESTION_API + searchParams);
+        const res = await fetch(YOUTUBE_SEARCH_SUGGESTION_API + searchQuery);
         const data = await res.json();
         console.log(data);
         setSearchSuggestions(data[1]);
+
+        //update cache
+        dispatch(
+          cacheResults({
+            [searchQuery]: data[1],
+          })
+        );
       } catch (err) {
         console.error("Error fetching suggestions:", err);
       }
     };
 
     const timer = setTimeout(() => {
-      fetchSuggestions();
+      if (searchCache[searchQuery]) {
+        setSearchSuggestions(searchCache[searchQuery]);
+      } else {
+        fetchSuggestions();
+      }
     }, 200);
 
     return () => {
-      clearInterval(timer);
+      clearTimeout(timer);
     };
-  }, [searchParams]);
+  }, [searchQuery]);
 
   return (
     <div className="grid grid-flow-col p-2 mx-auto  items-center ">
@@ -52,12 +66,12 @@ export const Header = () => {
           <input
             type="text"
             name="search"
-            onChange={(e) => setSearchParams(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="p-1 pl-6 bg-gray-100 rounded-l-full w-96 placeholder-gray-500 placeholder-opacity-75"
             placeholder="search"
-            value={searchParams}
-            onFocus={()=>setShowSuggestion(true)}
-            onBlur={()=>setShowSuggestion(false)}
+            value={searchQuery}
+            onFocus={() => setShowSuggestion(true)}
+            onBlur={() => setShowSuggestion(false)}
           />
           <div className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500">
             <Search className="size-5 ml-2" />
@@ -67,7 +81,8 @@ export const Header = () => {
           <ul className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-lg border z-50">
             {searchSuggestions.map((suggestion, index) => (
               <li
-                key={suggestion + index} // better than just `index`
+                key={`${index}-${suggestion}`}
+                // better than just `index`
                 className="p-2 hover:bg-gray-100 "
               >
                 {suggestion}
