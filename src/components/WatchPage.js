@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { closeMenu } from "../store/navSlice";
 import { useSearchParams } from "react-router-dom";
+import CommentsContainer from "./CommentContainer";
 
 export const WatchPage = () => {
   const [searchParam]=useSearchParams()
@@ -23,6 +24,7 @@ export const WatchPage = () => {
         allowFullScreen
         className="rounded-3xl"
       ></iframe>
+      <CommentsContainer/>
     </div>
   );
 };
