@@ -1,10 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { toggleMenuBar } from "../store/navSlice";
+import { YOUTUBE_SEARCH_SUGGESTION_API } from "../utils/constants";
 
 export const Header = () => {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestion,setShowSuggestion]=useState(false)
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(YOUTUBE_SEARCH_SUGGESTION_API + searchParams);
+        const data = await res.json();
+        console.log(data);
+        setSearchSuggestions(data[1]);
+      } catch (err) {
+        console.error("Error fetching suggestions:", err);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchSuggestions();
+    }, 200);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [searchParams]);
+
   return (
     <div className="grid grid-flow-col p-2 mx-auto  items-center ">
       <div className="flex items-center gap-2 col-span-1 ml-2">
@@ -19,16 +47,34 @@ export const Header = () => {
         </div>
       </div>
 
-      <div className="col-span-10 mx-auto flex">
-        <input
-          type="text"
-          name="search"
-          className="p-1 pl-6 bg-gray-100 rounded-l-full w-96 placeholder-gray-500 placeholder-opacity-75"
-          placeholder="search"
-        />
-        <div className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500">
-          <Search className="size-5 ml-2" />
+      <div className="relative w-96  mx-auto">
+        <div className="flex w-full">
+          <input
+            type="text"
+            name="search"
+            onChange={(e) => setSearchParams(e.target.value)}
+            className="p-1 pl-6 bg-gray-100 rounded-l-full w-96 placeholder-gray-500 placeholder-opacity-75"
+            placeholder="search"
+            value={searchParams}
+            onFocus={()=>setShowSuggestion(true)}
+            onBlur={()=>setShowSuggestion(false)}
+          />
+          <div className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500">
+            <Search className="size-5 ml-2" />
+          </div>
         </div>
+        {searchSuggestions.length > 0 && showSuggestion && (
+          <ul className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-lg border z-50">
+            {searchSuggestions.map((suggestion, index) => (
+              <li
+                key={suggestion + index} // better than just `index`
+                className="p-2 hover:bg-gray-100 "
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="w-8 col-span-1 mx-auto">

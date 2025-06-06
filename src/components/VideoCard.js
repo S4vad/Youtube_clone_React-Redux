@@ -4,7 +4,6 @@ export const VideoCard = ({info}) => {
      if (!info || !info.snippet) {
     return <div>Loading...</div>; 
   }
-  console.log(info)
   const {snippet,statistics}=info;
   const {channelTitle,title,thumbnails}=snippet;
   return (

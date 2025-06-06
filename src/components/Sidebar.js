@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 
 export const Sidebar = () => {
   const nav=useSelector(state=>state.nav.showMenuBar)
-  console.log('tht nfe',nav)
   if(!nav){
     return null;
   }

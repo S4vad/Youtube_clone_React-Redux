@@ -10,9 +10,10 @@ export const WatchPage = () => {
     dispatch(closeMenu());
   }, []);
   return (
-    <div className="px-5">
+
+    <div className="px-20">
       <iframe
-        width="900"
+        width="800"
         height="450"
         src={"https://www.youtube.com/embed/"+searchParam.get('v')}
         title="YouTube video player"
@@ -20,6 +21,7 @@ export const WatchPage = () => {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
+        className="rounded-3xl"
       ></iframe>
     </div>
   );
