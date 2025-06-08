@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleMenuBar } from "../store/navSlice";
 import { YOUTUBE_SEARCH_SUGGESTION_API } from "../utils/constants";
 import { cacheResults } from "../store/searchSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const searchCache = useSelector((store) => store.search);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,6 +49,18 @@ export const Header = () => {
     };
   }, [searchQuery]);
 
+const handleClick = (suggestion) => {
+  setShowSuggestion(false);
+  navigate(`/search/${suggestion || searchQuery}`);
+};
+
+  const handleKey=(e)=>{
+    if(e.key==="Enter"){
+      setShowSuggestion(false)
+      handleClick()
+    }
+  }
+
   return (
     <div className="grid grid-flow-col p-2 mx-auto  items-center ">
       <div className="flex items-center gap-2 col-span-1 ml-2">
@@ -67,15 +81,19 @@ export const Header = () => {
             type="text"
             name="search"
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) =>handleKey(e)}
             className="p-1 pl-6 bg-gray-100 rounded-l-full w-96 placeholder-gray-500 placeholder-opacity-75"
             placeholder="search"
             value={searchQuery}
             onFocus={() => setShowSuggestion(true)}
             onBlur={() => setShowSuggestion(false)}
           />
-          <div className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500">
+          <button
+            onClick={()=>handleClick(searchQuery)}
+            className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500"
+          >
             <Search className="size-5 ml-2" />
-          </div>
+          </button>
         </div>
         {searchSuggestions.length > 0 && showSuggestion && (
           <ul className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-lg border z-50">
@@ -83,7 +101,8 @@ export const Header = () => {
               <li
                 key={`${index}-${suggestion}`}
                 // better than just `index`
-                className="p-2 hover:bg-gray-100 "
+                onMouseDown={() => handleClick(suggestion)}
+                className="p-2 hover:bg-gray-100 hover:cursor-pointer"
               >
                 {suggestion}
               </li>

@@ -16,7 +16,7 @@ export const VideoCard = ({ info }) => {
       <ul>
         <li className="font-bol py-2">{title}</li>
         <li>{channelTitle}</li>
-        <li>{statistics.viewCount}</li>
+        <li>{statistics?.viewCount}</li>
       </ul>
     </div>
   );
