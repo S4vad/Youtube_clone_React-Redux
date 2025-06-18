@@ -11,7 +11,7 @@ export const VideoCard = ({ info }) => {
   const { snippet, statistics } = info;
   const { channelTitle, title, thumbnails } = snippet;
   return (
-    <div className={`p-2 m-2 ${showMenuBar?"w-[22rem]":"w-80"} shadow-lg`}>
+    <div className={`p-2 m-2 ${showMenuBar?"w-[26rem]":"w-[22rem]"} shadow-lg`}>
       <img className="rounded-lg" alt="thumbnails" src={thumbnails.high.url} />
       <ul>
         <li className="font-bol py-2">{title}</li>

@@ -20,7 +20,7 @@ const barTitle = [
 
 export const BarList = () => {
   return (
-    <div className="flex p-2 gap-2 flex-row justify-evenly items-center mt-2">
+    <div className="flex p-2 gap-2 flex-row justify-evenly items-center mt-2 cursor-pointer">
       {barTitle.map((item, index) => (
         <div key={index}>
           <Bar item={item} />
