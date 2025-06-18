@@ -15,14 +15,13 @@ export const VideoContainer = () => {
 
   const fetch_video = async () => {
     try {
-    
       const url = query
         ? `${YOUTUBE_SEARCH_API}&q=${encodeURIComponent(query)}`
         : YOUTUBE_VIDEOS_API;
-      console.log(url)
+      console.log(url);
       const data = await fetch(url);
       const json = await data.json();
-      console.log('the out',json)
+      console.log("the out", json);
       setVideos(json.items);
     } catch (error) {}
   };

@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
-import React from 'react'
-import { useSelector } from 'react-redux'
+import { Link } from "react-router-dom";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   Home,
   Flame,
@@ -12,7 +12,6 @@ import {
   ThumbsUp,
   PlusCircle,
 } from "lucide-react";
-
 
 const menuItems = [
   { label: "Home", icon: <Home size={20} />, path: "/" },
@@ -27,14 +26,13 @@ const menuItems = [
   { label: "New", icon: <PlusCircle size={20} /> },
 ];
 
-
 export const Sidebar = () => {
-  const nav=useSelector(state=>state.nav.showMenuBar)
-  if(!nav){
+  const nav = useSelector((state) => state.nav.showMenuBar);
+  if (!nav) {
     return null;
   }
   return (
-<div className="w-48 bg-gray-100 h-screen flex flex-col py-4">
+    <div className="w-48 bg-gray-100 h-screen flex flex-col py-4">
       <ul className="w-full">
         {menuItems.map((item, index) => (
           <li
@@ -47,5 +45,5 @@ export const Sidebar = () => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};

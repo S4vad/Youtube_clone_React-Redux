@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Menu, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenuBar } from "../store/navSlice";
-import { YOUTUBE_SEARCH_SUGGESTION_API } from "../utils/constants";
 import { cacheResults } from "../store/searchSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -20,22 +19,24 @@ export const Header = () => {
 
     const fetchSuggestions = async () => {
       try {
-        const res = await fetch(YOUTUBE_SEARCH_SUGGESTION_API + searchQuery);
-        const data = await res.json();
-        console.log(data);
-        setSearchSuggestions(data[1]);
-
-        //update cache
-        dispatch(
-          cacheResults({
-            [searchQuery]: data[1],
-          })
+        const proxyUrl = "https://api.allorigins.win/get?url=";
+        const apiUrl = encodeURIComponent(
+          `http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${searchQuery}`
         );
+
+        const res = await fetch(proxyUrl + apiUrl);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        const suggestions = JSON.parse(data.contents)[1];
+
+        setSearchSuggestions(suggestions);
+        dispatch(cacheResults({ [searchQuery]: suggestions }));
       } catch (err) {
         console.error("Error fetching suggestions:", err);
+        setSearchSuggestions([]);
       }
     };
-
     const timer = setTimeout(() => {
       if (searchCache[searchQuery]) {
         setSearchSuggestions(searchCache[searchQuery]);
@@ -49,17 +50,17 @@ export const Header = () => {
     };
   }, [searchQuery]);
 
-const handleClick = (suggestion) => {
-  setShowSuggestion(false);
-  navigate(`/search/${suggestion || searchQuery}`);
-};
+  const handleClick = (suggestion) => {
+    setShowSuggestion(false);
+    navigate(`/search/${suggestion || searchQuery}`);
+  };
 
-  const handleKey=(e)=>{
-    if(e.key==="Enter"){
-      setShowSuggestion(false)
-      handleClick()
+  const handleKey = (e) => {
+    if (e.key === "Enter") {
+      setShowSuggestion(false);
+      handleClick();
     }
-  }
+  };
 
   return (
     <div className="grid grid-flow-col p-2 mx-auto  items-center ">
@@ -81,7 +82,7 @@ const handleClick = (suggestion) => {
             type="text"
             name="search"
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) =>handleKey(e)}
+            onKeyDown={(e) => handleKey(e)}
             className="p-1 pl-6 bg-gray-100 rounded-l-full w-96 placeholder-gray-500 placeholder-opacity-75"
             placeholder="search"
             value={searchQuery}
@@ -89,7 +90,7 @@ const handleClick = (suggestion) => {
             onBlur={() => setShowSuggestion(false)}
           />
           <button
-            onClick={()=>handleClick(searchQuery)}
+            onClick={() => handleClick(searchQuery)}
             className="p-2 bg-gray-200 rounded-r-full pr-6 text-gray-500"
           >
             <Search className="size-5 ml-2" />
